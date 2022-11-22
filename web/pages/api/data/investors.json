@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "Luke",
+    "riskLevel": 0.20
+  },
+  {
+    "id": 2,
+    "name": "Leia",
+    "riskLevel": 0.05
+  },
+  {
+    "id": 3,
+    "name": "Han",
+    "riskLevel": 0.70
+  },
+  {
+    "id": 4,
+    "name": "Chewbacca",
+    "riskLevel": 0.15
+  },
+  {
+    "id": 5,
+    "name": "See-Threepio",
+    "riskLevel": 0.33
+  },
+  {
+    "id": 6,
+    "name": "Artoo-Detoo",
+    "riskLevel": 0.64
+  }
+]
