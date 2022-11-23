@@ -2,7 +2,7 @@ export interface Holding {
   id: number;
   investorId: number;
   investmentAccount: string;
-  balance: `${number}`;
+  balance: string;
 }
 
 export interface Investor {
@@ -15,4 +15,21 @@ export interface Rate {
   id: number;
   investmentAccount: string;
   annualRate: number;
+}
+
+export interface RateTotal extends Rate {
+  investmentTotal: number;
+  annualInterest: number;
+}
+
+export interface Rates {
+  bankOfEnglandRate: number;
+  rates: RateTotal[];
+}
+
+export interface InvestorHolding {
+  investor: Investor;
+  holdings: Holding[];
+  totalHolding: number;
+  annualInterest: number;
 }

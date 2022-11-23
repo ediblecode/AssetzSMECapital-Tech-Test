@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import type { Investor } from "../../types";
+import type { Holding, Investor } from "../../types";
 
 import investors from "./data/investors.json";
 
