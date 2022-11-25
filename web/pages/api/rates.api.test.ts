@@ -28,6 +28,12 @@ jest.mock("./data/holdings.json", () => [
     investmentAccount: "ABC",
     investorId: 4,
   } as Holding,
+  {
+    balance: "300",
+    id: 3,
+    investmentAccount: "XYZ",
+    investorId: 4,
+  } as Holding,
 ]);
 
 describe("/api/rates", () => {
@@ -45,16 +51,26 @@ describe("/api/rates", () => {
     ratesHandler(req, res);
 
     expect(json).toHaveBeenCalledWith({
-      bankOfEnglandRate: expect.any(Number),
+      bankOfEnglandRate: 2.25,
+      annualInterest: 31.5,
+      investmentTotal: 600,
       rates: [
         {
           annualInterest: 13.5,
-          annualRate: 4.5,
+          annualRate: 2.25,
+          totalAnnualRate: 4.5,
           id: 1,
           investmentAccount: "ABC",
           investmentTotal: 300,
         },
-        expect.any(Object),
+        {
+          annualInterest: 18,
+          annualRate: 3.75,
+          totalAnnualRate: 6,
+          id: 2,
+          investmentAccount: "XYZ",
+          investmentTotal: 300,
+        },
       ],
     });
   });
@@ -71,16 +87,26 @@ describe("/api/rates", () => {
     );
 
     expect(json).toHaveBeenCalledWith({
+      annualInterest: 24,
       bankOfEnglandRate: 1,
+      investmentTotal: 600,
       rates: [
         {
           annualInterest: 9.75,
-          annualRate: 3.25,
+          annualRate: 2.25,
+          totalAnnualRate: 3.25,
           id: 1,
           investmentAccount: "ABC",
           investmentTotal: 300,
         },
-        expect.any(Object),
+        {
+          annualInterest: 14.25,
+          annualRate: 3.75,
+          totalAnnualRate: 4.75,
+          id: 2,
+          investmentAccount: "XYZ",
+          investmentTotal: 300,
+        },
       ],
     });
   });
