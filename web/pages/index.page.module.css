@@ -24,3 +24,35 @@
     justify-content: flex-end;
   }
 }
+
+.summary {
+  display: flex;
+  flex-direction: column;
+}
+
+.total {
+  font-weight: bold;
+  margin-top: 0;
+}
+
+.bankOfEnglandRate {
+  display: flex;
+  font-weight: bold;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.bankOfEnglandRate input {
+  width: 3rem;
+}
+
+@media (min-width: 40em) {
+  .summary {
+    align-items: flex-start;
+    flex-direction: row-reverse;
+  }
+
+  .totals {
+    flex-grow: 1;
+  }
+}

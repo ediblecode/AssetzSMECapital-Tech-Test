@@ -1,5 +1,7 @@
 :root {
   accent-color: #33276b;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
 }
 
 html,

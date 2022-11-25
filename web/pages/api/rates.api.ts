@@ -1,13 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import type { Rates } from "../../types";
+import type { RatesResponse, RateTotal } from "../../types";
 import { calculateInterest, defaultBoERate } from "../../utils/number";
 
-import rates from "./data/rates.json";
+import rawRates from "./data/rates.json";
 import holdings from "./data/holdings.json";
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Rates>
+  res: NextApiResponse<RatesResponse>
 ) {
   const { query } = req;
 
@@ -15,11 +15,8 @@ export default function handler(
     throw Error(`Bank of england rate should not be an array`);
 
   const bankOfEnglandRate =
-    parseFloat(query.bankOfEnglandRate || "") || defaultBoERate;
-
-  res.status(200).json({
-    bankOfEnglandRate,
-    rates: rates.map((rate) => {
+      parseFloat(query.bankOfEnglandRate || "") || defaultBoERate,
+    rates: RateTotal[] = rawRates.map((rate) => {
       const investmentTotal = holdings
           .filter(
             (holding) => holding.investmentAccount === rate.investmentAccount
@@ -34,10 +31,28 @@ export default function handler(
 
       return {
         ...rate,
-        annualRate: rate.annualRate + bankOfEnglandRate,
+        totalAnnualRate: rate.annualRate + bankOfEnglandRate,
         investmentTotal,
         annualInterest,
       };
     }),
+    investmentTotal = rates.reduce(
+      (total, rate) => (total += rate.investmentTotal),
+      0
+    ),
+    annualInterest = rates.reduce(
+      (total, rate) =>
+        (total += calculateInterest(
+          rate.investmentTotal,
+          rate.annualRate,
+          bankOfEnglandRate
+        )),
+      0
+    );
+  res.status(200).json({
+    bankOfEnglandRate,
+    rates,
+    investmentTotal,
+    annualInterest,
   });
 }

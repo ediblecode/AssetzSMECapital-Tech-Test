@@ -7,8 +7,11 @@ import { useRouter } from "next/router";
 import { createRef, useCallback } from "react";
 import { Container } from "../components/Container/Container";
 import { Table } from "../components/Table/Table";
-import { InvestorHoldingResponse, Rates } from "../types";
-import { displayCurrency as displayCurrency } from "../utils/number";
+import { InvestorHoldingResponse, RatesResponse } from "../types";
+import {
+  displayCurrency as displayCurrency,
+  roundToTwoDecimalPlaces,
+} from "../utils/number";
 import styles from "./index.page.module.css";
 import { Range } from "../components/Range/Range";
 
@@ -16,7 +19,7 @@ const apiBase = "http://localhost:3000/api/";
 
 export interface HomeProps {
   investorHoldings: InvestorHoldingResponse;
-  rates: Rates;
+  rates: RatesResponse;
   sort: string;
 }
 
@@ -28,7 +31,7 @@ export default function Home({
     minimumHolding,
     maximumHolding,
   },
-  rates: { bankOfEnglandRate, rates },
+  rates: { bankOfEnglandRate, rates, investmentTotal, annualInterest },
   sort,
 }: HomeProps) {
   const router = useRouter(),
@@ -98,8 +101,12 @@ export default function Home({
               {investorHoldings.map(
                 ({ investor, totalHolding, holdings, annualInterest }) => (
                   <tr key={investor.id}>
-                    <th scope="row">{investor.name}</th>
-                    <td>£{displayCurrency(totalHolding)}</td>
+                    <th scope="row" data-label="Investor">
+                      {investor.name}
+                    </th>
+                    <td data-label="Investor total">
+                      £{displayCurrency(totalHolding)}
+                    </td>
                     {rates.map((rate) => {
                       const holding = holdings.find(
                         (holding) =>
@@ -107,7 +114,7 @@ export default function Home({
                       );
 
                       return (
-                        <td key={rate.id}>
+                        <td key={rate.id} data-label={rate.investmentAccount}>
                           {holding ? (
                             <>£{displayCurrency(holding.balance)}</>
                           ) : (
@@ -116,7 +123,9 @@ export default function Home({
                         </td>
                       );
                     })}
-                    <td>£{displayCurrency(annualInterest)}</td>
+                    <td data-label="Investor annual interest due">
+                      £{displayCurrency(annualInterest)}
+                    </td>
                   </tr>
                 )
               )}
@@ -137,24 +146,52 @@ export default function Home({
           <Table caption="Investment accounts with their totals and annual interest due">
             <thead>
               <tr>
-                <th scope="col">Investor</th>
-                <th scope="col">Investor total</th>
+                <th scope="col">Account</th>
+                <th scope="col">Account total</th>
                 <th scope="col">Annual interest due</th>
               </tr>
             </thead>
             <tbody>
               {rates.map((rate) => (
                 <tr key={rate.id}>
-                  <th scope="row">
-                    {rate.investmentAccount} ({displayCurrency(rate.annualRate)}
+                  <th scope="row" data-label="Account">
+                    {rate.investmentAccount} (
+                    {displayCurrency(rate.totalAnnualRate)}
                     %)
                   </th>
-                  <td>£{displayCurrency(rate.investmentTotal)}</td>
-                  <td>£{displayCurrency(rate.annualInterest)}</td>
+                  <td data-label="Account total">
+                    £{displayCurrency(rate.investmentTotal)}
+                  </td>
+                  <td data-label="Annual interest due">
+                    £{displayCurrency(rate.annualInterest)}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </Table>
+
+          <div className={styles.summary}>
+            <label className={styles.bankOfEnglandRate}>
+              BoE rate (%)
+              <input
+                type="number"
+                name="bankOfEnglandRate"
+                defaultValue={roundToTwoDecimalPlaces(bankOfEnglandRate)}
+                onChange={doClientSideFormSubmit}
+              />
+            </label>
+            <div className={styles.totals}>
+              <p className={styles.total}>
+                Investment total:{" "}
+                <output>£{displayCurrency(investmentTotal)}</output>
+              </p>
+
+              <p className={styles.total}>
+                Total annual interest due:{" "}
+                <output>£{displayCurrency(annualInterest)}</output>
+              </p>
+            </div>
+          </div>
         </form>
       </Container>
     </>
@@ -177,7 +214,7 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
 
   const [investorHoldings, rates] = (await Promise.all(
       apiResponses.map((response) => response.json())
-    )) as [InvestorHoldingResponse, Rates],
+    )) as [InvestorHoldingResponse, RatesResponse],
     { sort } = query;
 
   return {

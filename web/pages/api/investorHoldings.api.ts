@@ -8,7 +8,7 @@ import type {
 import {
   calculateInterest,
   defaultBoERate,
-  roundCurrency,
+  roundToTwoDecimalPlaces,
 } from "../../utils/number";
 
 import allHoldings from "./data/holdings.json";
@@ -79,8 +79,10 @@ export default function handler(
       ({ investor: { riskLevel }, totalHolding }) =>
         riskLevel >= investorRiskMin &&
         riskLevel <= investorRiskMax &&
-        roundCurrency(totalHolding) >= roundCurrency(investorTotalMin) &&
-        roundCurrency(totalHolding) <= roundCurrency(investorTotalMax)
+        roundToTwoDecimalPlaces(totalHolding) >=
+          roundToTwoDecimalPlaces(investorTotalMin) &&
+        roundToTwoDecimalPlaces(totalHolding) <=
+          roundToTwoDecimalPlaces(investorTotalMax)
     )
     .sort((a, b) => {
       if (query.sort === "nameAsc")

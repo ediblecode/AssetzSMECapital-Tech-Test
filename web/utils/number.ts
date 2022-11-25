@@ -1,13 +1,16 @@
 export const defaultBoERate = 2.25;
 
-export const roundCurrency = (num: number) =>
+export const roundToTwoDecimalPlaces = (num: number) =>
   Math.round((num + Number.EPSILON) * 100) / 100;
 
 export const displayCurrency = (num: number | string) =>
-  roundCurrency(typeof num === "string" ? parseFloat(num) : num).toFixed(2);
+  roundToTwoDecimalPlaces(
+    typeof num === "string" ? parseFloat(num) : num
+  ).toFixed(2);
 
 export const calculateInterest = (
   balance: number,
   annualRate: number,
   bankOfEnglandRate: number
-) => roundCurrency((balance * (annualRate + bankOfEnglandRate)) / 100);
+) =>
+  roundToTwoDecimalPlaces((balance * (annualRate + bankOfEnglandRate)) / 100);

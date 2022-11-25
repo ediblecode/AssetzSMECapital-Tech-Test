@@ -1,7 +1,7 @@
 import { ChangeEvent, FC, ReactNode, useCallback, useState } from "react";
 import throttle from "just-throttle";
 
-import { roundCurrency, displayCurrency } from "../../utils/number";
+import { roundToTwoDecimalPlaces, displayCurrency } from "../../utils/number";
 
 import styles from "./Range.module.css";
 
@@ -46,7 +46,7 @@ export const Range: FC<RangeProps> = ({
           <input
             type="range"
             min={0}
-            max={roundCurrency(max)}
+            max={roundToTwoDecimalPlaces(max)}
             step="any"
             value={minValue}
             name={`${name}Min`}
@@ -66,7 +66,7 @@ export const Range: FC<RangeProps> = ({
           <input
             type="range"
             min={0}
-            max={roundCurrency(max)}
+            max={roundToTwoDecimalPlaces(max)}
             step="any"
             value={maxValue}
             name={`${name}Max`}
