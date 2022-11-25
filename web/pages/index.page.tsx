@@ -175,6 +175,7 @@ export default function Home({
               BoE rate (%)
               <input
                 type="number"
+                min={0}
                 name="bankOfEnglandRate"
                 defaultValue={roundToTwoDecimalPlaces(bankOfEnglandRate)}
                 onChange={doClientSideFormSubmit}
