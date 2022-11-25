@@ -1,5 +1,6 @@
 import type { GetServerSideProps } from "next";
 import { stringify } from "querystring";
+import { useIsClient } from "usehooks-ts";
 
 import serialize from "form-serialize";
 import Head from "next/head";
@@ -35,7 +36,8 @@ export default function Home({
   sort,
 }: HomeProps) {
   const router = useRouter(),
-    formRef = createRef<HTMLFormElement>();
+    formRef = createRef<HTMLFormElement>(),
+    isClient = useIsClient();
 
   const doClientSideFormSubmit = useCallback(() => {
     if (formRef.current) {
@@ -193,6 +195,10 @@ export default function Home({
               </p>
             </div>
           </div>
+
+          {isClient ? null : (
+            <button type="submit">Apply filters and sort</button>
+          )}
         </form>
       </Container>
     </>
