@@ -29,8 +29,10 @@
   },
   "devDependencies": {
     "@jest/globals": "^29.3.1",
+    "@testing-library/react": "^13.4.0",
     "@types/form-serialize": "^0.7.2",
     "@types/jest": "^29.2.3",
+    "identity-obj-proxy": "^3.0.0",
     "jest": "^29.3.1",
     "jest-environment-jsdom": "^29.3.1",
     "ts-jest": "^29.0.3",

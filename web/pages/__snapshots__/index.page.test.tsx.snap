@@ -1,0 +1,297 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Home should match snapshot 1`] = `
+<div>
+  <div
+    class="container"
+  >
+    <form>
+      <div
+        class="sliders"
+      >
+        <fieldset
+          class="fieldset"
+        >
+          <legend
+            class="legend"
+          >
+            Investor risk
+          </legend>
+          <div
+            class="sliders"
+          >
+            <label>
+              <span
+                class="labelText"
+              >
+                Min: 
+                0.00
+              </span>
+              <input
+                max="1"
+                min="0"
+                name="investorRiskMin"
+                step="any"
+                type="range"
+                value="0"
+              />
+            </label>
+            <label>
+              <span
+                class="labelText"
+              >
+                Max: 
+                1.00
+              </span>
+              <input
+                max="1"
+                min="0"
+                name="investorRiskMax"
+                step="any"
+                type="range"
+                value="1"
+              />
+            </label>
+          </div>
+        </fieldset>
+        <fieldset
+          class="fieldset"
+        >
+          <legend
+            class="legend"
+          >
+            Investor total
+          </legend>
+          <div
+            class="sliders"
+          >
+            <label>
+              <span
+                class="labelText"
+              >
+                Min: 
+                £
+                0.00
+              </span>
+              <input
+                max="100"
+                min="0"
+                name="investorTotalMin"
+                step="any"
+                type="range"
+                value="0"
+              />
+            </label>
+            <label>
+              <span
+                class="labelText"
+              >
+                Max: 
+                £
+                100.00
+              </span>
+              <input
+                max="100"
+                min="0"
+                name="investorTotalMax"
+                step="any"
+                type="range"
+                value="100"
+              />
+            </label>
+          </div>
+        </fieldset>
+      </div>
+      <table
+        class="table"
+      >
+        <caption
+          class="visually-hidden"
+        >
+          Investors and their accounts with associated interest
+        </caption>
+        <thead>
+          <tr>
+            <th
+              scope="col"
+            >
+              Investor
+            </th>
+            <th
+              scope="col"
+            >
+              Investor total
+            </th>
+            <th
+              scope="col"
+            >
+              ABC
+               (
+              1.5
+              %)
+            </th>
+            <th
+              scope="col"
+            >
+              Investor annual interest due
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th
+              data-label="Investor"
+              scope="row"
+            >
+              Investor 1
+            </th>
+            <td
+              data-label="Investor total"
+            >
+              £
+              200.00
+            </td>
+            <td
+              data-label="ABC"
+            >
+              -
+            </td>
+            <td
+              data-label="Investor annual interest due"
+            >
+              £
+              15.00
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <label
+        class="sort"
+      >
+        Sort
+        <select
+          name="sort"
+        >
+          <option
+            value=""
+          >
+            Please select
+          </option>
+          <option
+            value="totalAsc"
+          >
+            Investor total (high to low)
+          </option>
+          <option
+            value="totalDesc"
+          >
+            Investor total (low to high)
+          </option>
+          <option
+            value="nameAsc"
+          >
+            Investor name (A to Z)
+          </option>
+          <option
+            value="nameDesc"
+          >
+            Investor name (Z to A)
+          </option>
+        </select>
+      </label>
+      <table
+        class="table"
+      >
+        <caption
+          class="visually-hidden"
+        >
+          Investment accounts with their totals and annual interest due
+        </caption>
+        <thead>
+          <tr>
+            <th
+              scope="col"
+            >
+              Account
+            </th>
+            <th
+              scope="col"
+            >
+              Account total
+            </th>
+            <th
+              scope="col"
+            >
+              Annual interest due
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th
+              data-label="Account"
+              scope="row"
+            >
+              ABC
+               (
+              2.50
+              %)
+            </th>
+            <td
+              data-label="Account total"
+            >
+              £
+              2000.00
+            </td>
+            <td
+              data-label="Annual interest due"
+            >
+              £
+              15.00
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div
+        class="summary"
+      >
+        <label
+          class="bankOfEnglandRate"
+        >
+          BoE rate (%)
+          <input
+            min="0"
+            name="bankOfEnglandRate"
+            type="number"
+            value="1"
+          />
+        </label>
+        <div
+          class="totals"
+        >
+          <p
+            class="total"
+          >
+            Investment total:
+             
+            <output>
+              £
+              2000.00
+            </output>
+          </p>
+          <p
+            class="total"
+          >
+            Total annual interest due:
+             
+            <output>
+              £
+              200.00
+            </output>
+          </p>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+`;
