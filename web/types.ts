@@ -33,3 +33,12 @@ export interface InvestorHolding {
   totalHolding: number;
   annualInterest: number;
 }
+
+export interface InvestorHoldingResponse {
+  bankOfEnglandRate: number;
+  minimumRiskLevel: number;
+  maximumRiskLevel: number;
+  minimumHolding: number;
+  maximumHolding: number;
+  investorHoldings: InvestorHolding[];
+}

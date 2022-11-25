@@ -1,5 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import type { Holding, Investor, InvestorHolding } from "../../types";
+import type {
+  Holding,
+  Investor,
+  InvestorHolding,
+  InvestorHoldingResponse,
+} from "../../types";
 import {
   calculateInterest,
   defaultBoERate,
@@ -12,7 +17,7 @@ import rates from "./data/rates.json";
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<InvestorHolding[]>
+  res: NextApiResponse<InvestorHoldingResponse>
 ) {
   const { query } = req;
 
@@ -22,7 +27,7 @@ export default function handler(
   const bankOfEnglandRate =
     parseFloat(query.bankOfEnglandRate || "") || defaultBoERate;
 
-  const investorHoldings: InvestorHolding[] = investors.map((investor) => {
+  const allInvestorHoldings: InvestorHolding[] = investors.map((investor) => {
     const holdings = allHoldings.filter(
         (holding) => holding.investorId === investor.id
       ),
@@ -57,5 +62,32 @@ export default function handler(
     };
   });
 
-  res.status(200).json(investorHoldings);
+  const riskLevels = investors.map((i) => i.riskLevel),
+    minimumRiskLevel = Math.min(...riskLevels),
+    maximumRiskLevel = Math.max(...riskLevels),
+    holdingTotals = allInvestorHoldings.map((h) => h.totalHolding),
+    minimumHolding = Math.min(...holdingTotals),
+    maximumHolding = Math.max(...holdingTotals),
+    investorRiskMin = parseFloat(query.investorRiskMin as string) ?? 0,
+    investorRiskMax = parseFloat(query.investorRiskMax as string) ?? 1,
+    investorTotalMin = parseFloat(query.investorTotalMin as string) ?? 0,
+    investorTotalMax =
+      parseFloat(query.investorTotalMax as string) ?? Number.MAX_VALUE;
+
+  const investorHoldings = allInvestorHoldings.filter(
+    ({ investor: { riskLevel }, totalHolding }) =>
+      riskLevel >= investorRiskMin &&
+      riskLevel <= investorRiskMax &&
+      roundCurrency(totalHolding) >= roundCurrency(investorTotalMin) &&
+      roundCurrency(totalHolding) <= roundCurrency(investorTotalMax)
+  );
+
+  res.status(200).json({
+    bankOfEnglandRate,
+    investorHoldings,
+    minimumRiskLevel,
+    maximumRiskLevel,
+    minimumHolding,
+    maximumHolding,
+  });
 }

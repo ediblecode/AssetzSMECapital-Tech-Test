@@ -1,21 +1,59 @@
 import type { GetServerSideProps } from "next";
+import { stringify } from "querystring";
+
+import serialize from "form-serialize";
 import Head from "next/head";
-import Image from "next/image";
+import { useRouter } from "next/router";
+import { createRef, useCallback } from "react";
 import { Container } from "../components/Container/Container";
 import { Table } from "../components/Table/Table";
-import { Investor, InvestorHolding, Rate, Rates } from "../types";
-import { displayCurrecy as displayCurrency } from "../utils/number";
+import { InvestorHoldingResponse, Rates } from "../types";
+import { displayCurrency as displayCurrency } from "../utils/number";
 import styles from "./index.page.module.css";
+import { Range } from "../components/Range/Range";
+
+const apiBase = "http://localhost:3000/api/";
 
 export interface HomeProps {
-  investorHoldings: InvestorHolding[];
+  investorHoldings: InvestorHoldingResponse;
   rates: Rates;
 }
 
 export default function Home({
-  investorHoldings,
+  investorHoldings: {
+    investorHoldings,
+    minimumRiskLevel,
+    maximumRiskLevel,
+    minimumHolding,
+    maximumHolding,
+  },
   rates: { bankOfEnglandRate, rates },
 }: HomeProps) {
+  const router = useRouter(),
+    formRef = createRef<HTMLFormElement>();
+
+  const doClientSideFormSubmit = useCallback(() => {
+    if (formRef.current) {
+      router.push(
+        {
+          query: serialize(formRef.current),
+        },
+        undefined,
+        { scroll: false }
+      );
+    }
+  }, [formRef, router]);
+
+  const formSubmitHandler = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      if (formRef.current) {
+        e.preventDefault();
+        doClientSideFormSubmit();
+      }
+    },
+    [formRef, doClientSideFormSubmit]
+  );
+
   return (
     <>
       <Head>
@@ -23,84 +61,100 @@ export default function Home({
       </Head>
 
       <Container>
-        <Table caption="Investors and their accounts with associated interest">
-          <thead>
-            <tr>
-              <th scope="col">Investor</th>
-              <th scope="col">Investor total</th>
-              {rates.map((rate) => (
-                <th key={rate.id} scope="col">
-                  {rate.investmentAccount} ({rate.annualRate}%)
-                </th>
-              ))}
-              <th scope="col">Investor annual interest due</th>
-            </tr>
-          </thead>
-          <tbody>
-            {investorHoldings.map(
-              ({ investor, totalHolding, holdings, annualInterest }) => (
-                <tr key={investor.id}>
-                  <th scope="row">{investor.name}</th>
-                  <td>£{displayCurrency(totalHolding)}</td>
-                  {rates.map((rate) => {
-                    const holding = holdings.find(
-                      (holding) =>
-                        holding.investmentAccount === rate.investmentAccount
-                    );
-
-                    return (
-                      <td key={rate.id}>
-                        {holding ? (
-                          <>£{displayCurrency(holding.balance)}</>
-                        ) : (
-                          "-"
-                        )}
-                      </td>
-                    );
-                  })}
-                  <td>£{displayCurrency(annualInterest)}</td>
-                </tr>
-              )
-            )}
-          </tbody>
-        </Table>
-
-        <Table caption="Investment accounts with their totals and annual interest due">
-          <thead>
-            <tr>
-              <th scope="col">Investor</th>
-              <th scope="col">Investor total</th>
-              <th scope="col">Annual interest due</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rates.map((rate) => (
-              <tr key={rate.id}>
-                <th scope="row">
-                  {rate.investmentAccount} ({displayCurrency(rate.annualRate)}%)
-                </th>
-                <td>£{displayCurrency(rate.investmentTotal)}</td>
-                <td>£{displayCurrency(rate.annualInterest)}</td>
+        <form ref={formRef} onSubmit={formSubmitHandler}>
+          <div className={styles.sliders}>
+            <Range
+              title="Investor risk"
+              name="investorRisk"
+              min={0}
+              max={1}
+              onChange={doClientSideFormSubmit}
+            />
+            <Range
+              title="Investor total"
+              name="investorTotal"
+              min={minimumHolding}
+              max={maximumHolding}
+              isCurrency
+              onChange={doClientSideFormSubmit}
+            />
+          </div>
+          <Table caption="Investors and their accounts with associated interest">
+            <thead>
+              <tr>
+                <th scope="col">Investor</th>
+                <th scope="col">Investor total</th>
+                {rates.map((rate) => (
+                  <th key={rate.id} scope="col">
+                    {rate.investmentAccount} ({rate.annualRate}%)
+                  </th>
+                ))}
+                <th scope="col">Investor annual interest due</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {investorHoldings.map(
+                ({ investor, totalHolding, holdings, annualInterest }) => (
+                  <tr key={investor.id}>
+                    <th scope="row">{investor.name}</th>
+                    <td>£{displayCurrency(totalHolding)}</td>
+                    {rates.map((rate) => {
+                      const holding = holdings.find(
+                        (holding) =>
+                          holding.investmentAccount === rate.investmentAccount
+                      );
+
+                      return (
+                        <td key={rate.id}>
+                          {holding ? (
+                            <>£{displayCurrency(holding.balance)}</>
+                          ) : (
+                            "-"
+                          )}
+                        </td>
+                      );
+                    })}
+                    <td>£{displayCurrency(annualInterest)}</td>
+                  </tr>
+                )
+              )}
+            </tbody>
+          </Table>
+          <Table caption="Investment accounts with their totals and annual interest due">
+            <thead>
+              <tr>
+                <th scope="col">Investor</th>
+                <th scope="col">Investor total</th>
+                <th scope="col">Annual interest due</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rates.map((rate) => (
+                <tr key={rate.id}>
+                  <th scope="row">
+                    {rate.investmentAccount} ({displayCurrency(rate.annualRate)}
+                    %)
+                  </th>
+                  <td>£{displayCurrency(rate.investmentTotal)}</td>
+                  <td>£{displayCurrency(rate.annualInterest)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </form>
       </Container>
     </>
   );
 }
 
 export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
+  req,
   query,
 }) => {
-  const { bankOfEnglandRate } = query;
-
   const apiResponses = await Promise.all([
+    fetch(`http://localhost:3000/api/investorHoldings?${stringify(query)}`),
     fetch(
-      `http://localhost:3000/api/investorHoldings?bankOfEnglandRate=${bankOfEnglandRate}`
-    ),
-    fetch(
-      `http://localhost:3000/api/rates?bankOfEnglandRate=${bankOfEnglandRate}`
+      `http://localhost:3000/api/rates?bankOfEnglandRate=${query.bankOfEnglandRate}`
     ),
   ]);
 
@@ -109,7 +163,7 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
 
   const [investorHoldings, rates] = (await Promise.all(
     apiResponses.map((response) => response.json())
-  )) as [InvestorHolding[], Rates];
+  )) as [InvestorHoldingResponse, Rates];
 
   return {
     props: {
