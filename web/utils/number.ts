@@ -9,8 +9,15 @@ export const displayCurrency = (num: number | string) =>
   ).toFixed(2);
 
 export const calculateInterest = (
-  balance: number,
+  balance: number | string,
   annualRate: number,
   bankOfEnglandRate: number
 ) =>
-  roundToTwoDecimalPlaces((balance * (annualRate + bankOfEnglandRate)) / 100);
+  roundToTwoDecimalPlaces(
+    ((typeof balance === "string" ? parseFloat(balance) : balance) *
+      (annualRate + bankOfEnglandRate)) /
+      100
+  );
+
+export const summingReducer = (total: number, amount: number) =>
+  (total += amount);

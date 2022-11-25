@@ -1,6 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { RatesResponse, RateTotal } from "../../types";
-import { calculateInterest, defaultBoERate } from "../../utils/number";
+import {
+  calculateInterest,
+  defaultBoERate,
+  summingReducer,
+} from "../../utils/number";
 
 import rawRates from "./data/rates.json";
 import holdings from "./data/holdings.json";
@@ -19,10 +23,11 @@ export default function handler(
     rates: RateTotal[] = rawRates.map((rate) => {
       const investmentTotal = holdings
           .filter(
-            (holding) => holding.investmentAccount === rate.investmentAccount
+            ({ investmentAccount }) =>
+              investmentAccount === rate.investmentAccount
           )
-          .map((holding) => parseFloat(holding.balance))
-          .reduce((total, balance) => (total += balance), 0),
+          .map(({ balance }) => parseFloat(balance))
+          .reduce(summingReducer, 0),
         annualInterest = calculateInterest(
           investmentTotal,
           rate.annualRate,
@@ -36,19 +41,15 @@ export default function handler(
         annualInterest,
       };
     }),
-    investmentTotal = rates.reduce(
-      (total, rate) => (total += rate.investmentTotal),
-      0
-    ),
-    annualInterest = rates.reduce(
-      (total, rate) =>
-        (total += calculateInterest(
-          rate.investmentTotal,
-          rate.annualRate,
-          bankOfEnglandRate
-        )),
-      0
-    );
+    investmentTotal = rates
+      .map(({ investmentTotal }) => investmentTotal)
+      .reduce(summingReducer, 0),
+    annualInterest = rates
+      .map(({ investmentTotal, annualRate }) =>
+        calculateInterest(investmentTotal, annualRate, bankOfEnglandRate)
+      )
+      .reduce(summingReducer, 0);
+
   res.status(200).json({
     bankOfEnglandRate,
     rates,

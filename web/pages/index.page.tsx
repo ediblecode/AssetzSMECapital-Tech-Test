@@ -16,7 +16,7 @@ import {
 import styles from "./index.page.module.css";
 import { Range } from "../components/Range/Range";
 
-const apiBase = "http://localhost:3000/api/";
+const apiBaseUrl = "http://localhost:3000/api/";
 
 export interface HomeProps {
   investorHoldings: InvestorHoldingResponse;
@@ -210,10 +210,8 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
   query,
 }) => {
   const apiResponses = await Promise.all([
-    fetch(`http://localhost:3000/api/investorHoldings?${stringify(query)}`),
-    fetch(
-      `http://localhost:3000/api/rates?bankOfEnglandRate=${query.bankOfEnglandRate}`
-    ),
+    fetch(`${apiBaseUrl}investorHoldings?${stringify(query)}`),
+    fetch(`${apiBaseUrl}rates?bankOfEnglandRate=${query.bankOfEnglandRate}`),
   ]);
 
   if (apiResponses.some((r) => !r.ok))
