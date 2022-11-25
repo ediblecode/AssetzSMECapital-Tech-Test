@@ -74,13 +74,26 @@ export default function handler(
     investorTotalMax =
       parseFloat(query.investorTotalMax as string) ?? Number.MAX_VALUE;
 
-  const investorHoldings = allInvestorHoldings.filter(
-    ({ investor: { riskLevel }, totalHolding }) =>
-      riskLevel >= investorRiskMin &&
-      riskLevel <= investorRiskMax &&
-      roundCurrency(totalHolding) >= roundCurrency(investorTotalMin) &&
-      roundCurrency(totalHolding) <= roundCurrency(investorTotalMax)
-  );
+  const investorHoldings = allInvestorHoldings
+    .filter(
+      ({ investor: { riskLevel }, totalHolding }) =>
+        riskLevel >= investorRiskMin &&
+        riskLevel <= investorRiskMax &&
+        roundCurrency(totalHolding) >= roundCurrency(investorTotalMin) &&
+        roundCurrency(totalHolding) <= roundCurrency(investorTotalMax)
+    )
+    .sort((a, b) => {
+      if (query.sort === "nameAsc")
+        return a.investor.name.localeCompare(b.investor.name);
+      else if (query.sort === "nameDesc")
+        return b.investor.name.localeCompare(a.investor.name);
+      else if (query.sort === "totalAsc")
+        return b.totalHolding - a.totalHolding;
+      else if (query.sort === "totalDesc")
+        return a.totalHolding - b.totalHolding;
+
+      return 0;
+    });
 
   res.status(200).json({
     bankOfEnglandRate,

@@ -17,6 +17,7 @@ const apiBase = "http://localhost:3000/api/";
 export interface HomeProps {
   investorHoldings: InvestorHoldingResponse;
   rates: Rates;
+  sort: string;
 }
 
 export default function Home({
@@ -28,6 +29,7 @@ export default function Home({
     maximumHolding,
   },
   rates: { bankOfEnglandRate, rates },
+  sort,
 }: HomeProps) {
   const router = useRouter(),
     formRef = createRef<HTMLFormElement>();
@@ -120,6 +122,18 @@ export default function Home({
               )}
             </tbody>
           </Table>
+
+          <label className={styles.sort}>
+            Sort
+            <select value={sort} name="sort" onChange={doClientSideFormSubmit}>
+              <option value="">Please select</option>
+              <option value="totalAsc">Investor total (high to low)</option>
+              <option value="totalDesc">Investor total (low to high)</option>
+              <option value="nameAsc">Investor name (A to Z)</option>
+              <option value="nameDesc">Investor name (Z to A)</option>
+            </select>
+          </label>
+
           <Table caption="Investment accounts with their totals and annual interest due">
             <thead>
               <tr>
@@ -162,13 +176,15 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
     throw Error(`Error requesting data from the API`);
 
   const [investorHoldings, rates] = (await Promise.all(
-    apiResponses.map((response) => response.json())
-  )) as [InvestorHoldingResponse, Rates];
+      apiResponses.map((response) => response.json())
+    )) as [InvestorHoldingResponse, Rates],
+    { sort } = query;
 
   return {
     props: {
       investorHoldings,
       rates,
+      sort: (sort as string) || "",
     },
   };
 };

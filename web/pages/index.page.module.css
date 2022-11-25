@@ -11,3 +11,16 @@
     gap: 4rem;
   }
 }
+
+.sort {
+  display: flex;
+  font-weight: bold;
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+
+@media (min-width: 40em) {
+  .sort {
+    justify-content: flex-end;
+  }
+}
