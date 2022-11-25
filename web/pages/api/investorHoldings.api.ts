@@ -32,43 +32,33 @@ export default function handler(
   { query }: NextApiRequest,
   res: NextApiResponse<InvestorHoldingResponse>
 ) {
-  if (Array.isArray(query.bankOfEnglandRate))
-    throw Error(`Bank of england rate should not be an array`);
-
   const bankOfEnglandRate =
-    parseFloat(query.bankOfEnglandRate || "") || defaultBoERate;
-
-  const allInvestorHoldings: InvestorHolding[] = investors.map((investor) => {
-    const holdings = allHoldings.filter(
+      parseFloat((query.bankOfEnglandRate as string) || "") || defaultBoERate,
+    allInvestorHoldings: InvestorHolding[] = investors.map((investor) => {
+      const holdings = allHoldings.filter(
         ({ investorId }) => investorId === investor.id
-      ),
-      totalHolding = holdings
-        .map(({ balance }) => parseFloat(balance))
-        .reduce(summingReducer, 0),
-      annualInterest = holdings
-        .map((holding) =>
-          calculateInterest(
-            holding.balance,
-            getRate(holding.investmentAccount).annualRate,
-            bankOfEnglandRate
-          )
-        )
-        .reduce(summingReducer, 0);
+      );
 
-    return {
-      investor,
-      holdings,
-      totalHolding,
-      annualInterest,
-    };
-  });
+      return {
+        investor,
+        holdings,
+        totalHolding: holdings
+          .map(({ balance }) => parseFloat(balance))
+          .reduce(summingReducer, 0),
+        annualInterest: holdings
+          .map((holding) =>
+            calculateInterest(
+              holding.balance,
+              getRate(holding.investmentAccount).annualRate,
+              bankOfEnglandRate
+            )
+          )
+          .reduce(summingReducer, 0),
+      };
+    });
 
   const riskLevels = investors.map((i) => i.riskLevel),
-    minimumRiskLevel = Math.min(...riskLevels),
-    maximumRiskLevel = Math.max(...riskLevels),
     holdingTotals = allInvestorHoldings.map((h) => h.totalHolding),
-    minimumHolding = Math.min(...holdingTotals),
-    maximumHolding = Math.max(...holdingTotals),
     investorRiskMin = parseFloat(query.investorRiskMin as string) || 0,
     investorRiskMax = parseFloat(query.investorRiskMax as string) || 1,
     investorTotalMin = parseFloat(query.investorTotalMin as string) || 0,
@@ -101,9 +91,9 @@ export default function handler(
   res.status(200).json({
     bankOfEnglandRate,
     investorHoldings,
-    minimumRiskLevel,
-    maximumRiskLevel,
-    minimumHolding,
-    maximumHolding,
+    minimumRiskLevel: Math.min(...riskLevels),
+    maximumRiskLevel: Math.max(...riskLevels),
+    minimumHolding: Math.min(...holdingTotals),
+    maximumHolding: Math.max(...holdingTotals),
   });
 }
