@@ -6,9 +6,10 @@ Install Node 18+ (or use Volta). `cd` into the *web* folder. Run `npm ci` to ins
 
 ### Q. If you had more time, what improvement or features would you add?
 
-- More tests, and:
+- More tests, and specifically:
+  - Integration tests that test that the props returned from `getServerSideProps` result in the correct rendered markup
   - Functional, browser-based tests
-  - Accessibility tests
+  - Automated accessibility tests
 - Better/more obvious focus rings
 - ARIA live announcements
 - Some more lower-level unit test and refactor the inline snapshot tests
@@ -51,3 +52,5 @@ Deciding where to do the data traversal/manipulation. I opted for the server, wi
 Fun. Good mixture of data wrangling, UI and styling. Plenty of scope to show what you can do and do it how you want, either 'full stack' like I've done or pure client-side.
 
 ### Q. Do you have any other comments we should read before evaluating your solution?
+
+I've added a few tests to show examples of pure unit tests as well as React UI ones using React Testing Library, but the coverage could be better. There are a few `it.todo` placeholders to indicate the sorts of missing ones.
