@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "lib": ["esnext"],
+    "lib": ["ESNext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -12,7 +12,10 @@
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": false,
-    "incremental": true
+    "incremental": true,
+    "types": ["node", "jest", "reflect-metadata"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "include": ["**/*.ts", "**/*.mts"],
   "exclude": ["node_modules"]

@@ -1,11 +1,43 @@
-import { DataLoader } from "./feed/DataLoader";
+import { container } from "./config/ioc.config";
+import { SERVICE_IDENTIFIER } from "./constants/identifiers";
+import { type IApp } from "./interfaces";
 
-const dataLoader = new DataLoader();
+import { printTable, Table } from "console-table-printer";
 
-const init = async () => {
-  const rates = await dataLoader.getRates();
+let app = container.get<IApp>(SERVICE_IDENTIFIER.APP);
 
-  console.log(rates);
-};
+app.getPortfolios().then((portfolios) => {
+  const p = new Table({
+    title: "Investor balances",
+    columns: [
+      {
+        name: "investorId",
+        title: "Investor ID",
+        alignment: "left",
+        color: "white_bold",
+      },
+      {
+        name: "totalValue",
+        title: "Value today",
+        alignment: "right",
+        color: "cyan",
+      },
+      {
+        name: "totalDailyPortfolioValue",
+        title: "Value tomorrow",
+        alignment: "right",
+        color: "magenta",
+      },
+      {
+        name: "totalAnnualPortfolioValue",
+        title: "Value in a year",
+        color: "yellow",
+        alignment: "right",
+      },
+    ],
+  });
 
-init();
+  p.addRows(portfolios);
+
+  p.printTable();
+});

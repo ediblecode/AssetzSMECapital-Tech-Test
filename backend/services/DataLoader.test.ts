@@ -1,5 +1,9 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
+
+import { container } from "../config/ioc.config";
+import { SERVICE_IDENTIFIER } from "../constants/identifiers";
+
 import { DataLoader } from "./DataLoader";
 
 var mock = new MockAdapter(axios, {
@@ -10,7 +14,7 @@ describe("DataLoader", () => {
   let dataLoader: DataLoader;
 
   beforeEach(() => {
-    dataLoader = new DataLoader();
+    dataLoader = container.get(SERVICE_IDENTIFIER.DATA_LOADER);
   });
 
   afterEach(() => {

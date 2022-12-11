@@ -14,6 +14,7 @@ export default {
   preset: "ts-jest",
   moduleFileExtensions: ["js", "ts", "mts"],
   extensionsToTreatAsEsm: [".ts", ".mts"],
+  setupFilesAfterEnv: ["./jest.setup.ts"],
   testMatch: ["./**/*.test.{mts,ts}"],
   transform: {
     "^.+\\.(ts|mts)$": [

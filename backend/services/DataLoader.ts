@@ -1,8 +1,11 @@
+import { injectable } from "inversify";
 import axios, { type AxiosInstance } from "axios";
 
 import { type RatesResponse, type Holding } from "../../web/types";
+import { type IDataLoader } from "../interfaces";
 
-export class DataLoader {
+@injectable()
+export class DataLoader implements IDataLoader {
   #axiosClient: AxiosInstance;
 
   constructor() {
